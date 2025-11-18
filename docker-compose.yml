@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn gateway.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - auth_service
+      - product_service
+      - cart_service
+      - order_service
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn auth_service.main:app --host 0.0.0.0 --port 8001
+    volumes:
+      - .:/app
+
+  product_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn product_service.main:app --host 0.0.0.0 --port 8002
+    volumes:
+      - .:/app
+
+  cart_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn cart_service.main:app --host 0.0.0.0 --port 8003
+    volumes:
+      - .:/app
+
+  order_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn order_service.main:app --host 0.0.0.0 --port 8004
+    volumes:
+      - .:/app
+    depends_on:
+      - payment_service
+      - notification_service
+
+  payment_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn payment_service.main:app --host 0.0.0.0 --port 8005
+    volumes:
+      - .:/app
+
+  notification_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn notification_service.main:app --host 0.0.0.0 --port 8006
+    volumes:
+      - .:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
