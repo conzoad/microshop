@@ -2,9 +2,9 @@ name: Microservices CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "lab3" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "lab3" ]
 
 jobs:
   test:
@@ -21,12 +21,12 @@ jobs:
       run: docker build -t microshop-app .
 
     - name: Run Tests inside Docker
-      run: docker run --rm microshop-app pytest ${{ matrix.service }}/test_main.py
+      run: docker run --rm microshop-app pytest ${{ matrix.service }}/test_lab3.py
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/lab3'
 
     steps:
     - uses: actions/checkout@v4
